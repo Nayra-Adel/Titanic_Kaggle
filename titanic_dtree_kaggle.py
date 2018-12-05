@@ -70,6 +70,21 @@ train_data.loc[train_data['Age'] > 64, 'Age'] = 4
 train_data.Sex = train_data.Sex.map({'male': 0, 'female': 1})
 titanic_test.Sex = titanic_test.Sex.map({'male': 0, 'female': 1})
 
+train_data['Title'] = train_data['Name'].str.extract(' ([A-Za-z]+)\.', expand=False)
+print(train_data['Title'].value_counts())
+train_data.Title = train_data.Title.map(
+                                    dict(Mr=0, Miss=1, Mrs=2, Master=3,
+                                         Dr=3, Rev=3, Col=3, Major=3, Mlle=3,
+                                         Countess=3, Ms=3, Lady=3, Jonkheer=3,
+                                         Don=3, Mme=3, Capt=3, Sir=3)
+                                    )
+
+titanic_test['Title'] = titanic_test['Name'].str.extract(' ([A-Za-z]+)\.', expand=False)
+print(titanic_test['Title'].value_counts())
+titanic_test.Title = titanic_test.Title.map(
+                                    dict(Mr=0, Miss=1, Mrs=2, Master=3,
+                                         Rev=3, Col=3, Dr=3, Dona=3, Ms=3)
+                                    )
 # Drop unimportant features
 train_data.drop(['Name', 'Cabin', 'PassengerId', 'Survived', 'Ticket'], axis=1, inplace=True)
 
@@ -136,6 +151,13 @@ max depth = 4 || 8
 Training : 82.3
 Validate : 76.54
 Kaggle   : 77.99
+
+Extract Title feature from Name:
+max depth = 3
+Training : 82.3
+Validate : 79.89
+Kaggle   : 76.555
+
 '''
 predict = tree1.predict(titanic_test)
 
