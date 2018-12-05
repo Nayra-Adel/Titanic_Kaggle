@@ -39,51 +39,23 @@ plt.show()
 Process the Data:
     1- If "Age" is missing , put 28 (median age).
     2- If "Embark" is missing , put "S" (most passengers boarded in S).
-    3- Drop The features "Ticket" and "Cabin" (have many missing values).
+    3- Drop "Cabin" (have many missing values).
 '''
 
 train_data = titanic_train
 
-# mapping Cabin
-titanic_test['Cabin'] = titanic_test['Cabin'].str[:1]
-titanic_test['Cabin'] = titanic_test['Cabin'].map({
-                       "A": 0, "B": 0.4, "C": 0.8, "D": 1.2,
-                       "E": 1.6, "F": 2, "G": 2.4, "T": 2.8
-                     })
-
-train_data['Cabin'] = train_data['Cabin'].str[:1]
-train_data['Cabin'] = train_data['Cabin'].map({
-                       "A": 0, "B": 0.4, "C": 0.8, "D": 1.2,
-                       "E": 1.6, "F": 2, "G": 2.4, "T": 2.8
-                     })
-
-# fill missing Cabin with median Cabin for each Pclass
-titanic_test["Cabin"].fillna(titanic_test.groupby("Pclass")["Cabin"].transform("median"), inplace=True)
-train_data["Cabin"].fillna(train_data.groupby("Pclass")["Cabin"].transform("median"), inplace=True)
-
-
-# Extract Title feature from the Name
-train_data['Title'] = train_data['Name'].str.extract(' ([A-Za-z]+)\.', expand=False)
-train_data.Title = train_data.Title.map(dict(Mr=0, Miss=1, Mrs=2, Master=3, Dr=3, Rev=3, Col=3, Major=3, Mlle=3, Countess=3, Ms=3, Lady=3, Jonkheer=3, Don=3, Mme=3, Capt=3, Sir=3))
-
-titanic_test['Title'] = titanic_test['Name'].str.extract(' ([A-Za-z]+)\.', expand=False)
-titanic_test.Title = titanic_test.Title.map(dict(Mr=0, Miss=1, Mrs=2, Master=3, Rev=3, Col=3, Dr=3, Dona=3, Ms=3))
-
-
-# clear Ticket feature "Extract the num"
+# Extract the number from Ticket feature
 train_data['Ticket'] = train_data['Ticket'].str.extract('(\d+)', expand=False)
 titanic_test['Ticket'] = titanic_test['Ticket'].str.extract('(\d+)', expand=False)
 
-
-# fill the missing in the Age & Embarked in training data
-train_data["Age"].fillna(titanic_train.Age.median(), inplace=True)
-train_data["Embarked"].fillna("S", inplace=True)
+# fill the missing in the Age & Embarked & Ticket in training data
+train_data.Age.fillna(titanic_train.Age.median(), inplace=True)
+train_data.Embarked.fillna("S", inplace=True)
 train_data.Ticket.fillna(233866, inplace=True)
 
 # fill the missing in the Age & Fare with the median in test data
 titanic_test.Age.fillna(titanic_test.Age.median(), inplace=True)
 titanic_test.Fare.fillna(titanic_test.Fare.median(), inplace=True)
-
 
 # create categorical variable
 train_data = pd.get_dummies(train_data, columns=["Pclass"])
@@ -91,11 +63,9 @@ train_data = pd.get_dummies(train_data, columns=["Embarked"])
 titanic_test = pd.get_dummies(titanic_test, columns=["Pclass"])
 titanic_test = pd.get_dummies(titanic_test, columns=["Embarked"])
 
-
 # map the sex
 train_data.Sex = train_data.Sex.map({'male': 0, 'female': 1})
 titanic_test.Sex = titanic_test.Sex.map({'male': 0, 'female': 1})
-
 
 # Mapping Age in training data
 '''
@@ -120,7 +90,6 @@ titanic_test.loc[(titanic_test['Age'] > 35) & (titanic_test['Age'] <= 45), 'Age'
 titanic_test.loc[(titanic_test['Age'] > 45) & (titanic_test['Age'] <= 65), 'Age'] = 3
 titanic_test.loc[titanic_test['Age'] > 65, 'Age'] = 4
 
-
 # Mapping Fare in training data
 fare_mean = train_data.Fare.mean()
 fare_median = train_data.Fare.median()
@@ -137,10 +106,9 @@ titanic_test.loc[(titanic_test['Fare'] > fare_mean) & (titanic_test['Fare'] <= f
 titanic_test.loc[titanic_test['Fare'] > fare_median, 'Fare'] = 3
 
 # Drop unimportant features
-train_data.drop(['Name', 'PassengerId', 'Survived', 'Title', 'Cabin'], axis=1, inplace=True)
-titanic_test.drop(['Name', 'PassengerId', 'Title', 'Cabin'], axis=1, inplace=True)
+train_data.drop(['Name', 'PassengerId', 'Survived', 'Cabin'], axis=1, inplace=True)
+titanic_test.drop(['Name', 'PassengerId', 'Cabin'], axis=1, inplace=True)
 
-print(train_data.info())
 Y = titanic_train.Survived.copy()
 
 # split the data to train & validate
@@ -172,23 +140,11 @@ Training : 82.3
 Validate : 76.54
 Kaggle   : 77.99
 
-Extract Title feature from Name:
-max depth = 3
-Training : 82.3
-Validate : 79.89
-Kaggle   : 76.555
-
 with Ticket Feature:
 max depth = 3
 Training : 81.88
 Validate : 79.89
 Kaggle   : 78.947
-
-All features Except name & id "using new feature Title from the name feature"
-max depth = 3
-Training : 82.3
-Validate : 79.89
-Kaggle   : 77.511
 
 Using Cabin feature is useless
 '''
