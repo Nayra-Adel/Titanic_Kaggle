@@ -45,12 +45,28 @@ train_data = titanic_train
 train_data["Age"].fillna(titanic_train.Age.median(), inplace=True)
 train_data["Embarked"].fillna("S", inplace=True)
 
+# mapping Cabin
+titanic_test['Cabin'] = titanic_test['Cabin'].str[:1]
+titanic_test['Cabin'] = titanic_test['Cabin'].map({
+                       "A": 0, "B": 0.4, "C": 0.8, "D": 1.2,
+                       "E": 1.6, "F": 2, "G": 2.4, "T": 2.8
+                     })
+
+train_data['Cabin'] = train_data['Cabin'].str[:1]
+train_data['Cabin'] = train_data['Cabin'].map({
+                       "A": 0, "B": 0.4, "C": 0.8, "D": 1.2,
+                       "E": 1.6, "F": 2, "G": 2.4, "T": 2.8
+                     })
+
+# fill missing Cabin with median Cabin for each Pclass
+titanic_test["Cabin"].fillna(titanic_test.groupby("Pclass")["Cabin"].transform("median"), inplace=True)
+train_data["Cabin"].fillna(train_data.groupby("Pclass")["Cabin"].transform("median"), inplace=True)
+
 # create categorical variable
 train_data = pd.get_dummies(train_data, columns=["Pclass"])
 train_data = pd.get_dummies(train_data, columns=["Embarked"])
 
 # Mapping Fare
-
 fare_mean = train_data.Fare.mean()
 fare_median = train_data.Fare.median()
 
@@ -95,7 +111,7 @@ titanic_test.Title = titanic_test.Title.map(
                                          Rev=3, Col=3, Dr=3, Dona=3, Ms=3)
                                     )
 # Drop unimportant features
-train_data.drop(['Name', 'Cabin', 'PassengerId', 'Survived', 'Ticket'], axis=1, inplace=True)
+train_data.drop(['Name', 'PassengerId', 'Survived', 'Ticket'], axis=1, inplace=True)
 
 # ----
 # Test
@@ -126,7 +142,7 @@ titanic_test.loc[(titanic_test['Age'] > 45) & (titanic_test['Age'] <= 65), 'Age'
 titanic_test.loc[titanic_test['Age'] > 65, 'Age'] = 4
 
 # Drop unimportant features
-titanic_test.drop(['Name', 'Cabin', 'PassengerId', 'Ticket'], axis=1, inplace=True)
+titanic_test.drop(['Name', 'PassengerId', 'Ticket'], axis=1, inplace=True)
 
 Y = titanic_train.Survived.copy()
 
@@ -167,9 +183,9 @@ Training : 82.3
 Validate : 79.89
 Kaggle   : 76.555
 
+Using Cabin feature is useless
 '''
 predict = tree1.predict(titanic_test)
-
 submission = pd.DataFrame({
     "PassengerId": PassengerId,
     "Survived": predict
