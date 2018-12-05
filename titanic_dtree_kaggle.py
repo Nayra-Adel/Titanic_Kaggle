@@ -95,6 +95,7 @@ train_data.loc[train_data['Age'] > 65, 'Age'] = 4
 train_data.Sex = train_data.Sex.map({'male': 0, 'female': 1})
 titanic_test.Sex = titanic_test.Sex.map({'male': 0, 'female': 1})
 
+# Extract Title feature from the Name
 train_data['Title'] = train_data['Name'].str.extract(' ([A-Za-z]+)\.', expand=False)
 print(train_data['Title'].value_counts())
 train_data.Title = train_data.Title.map(
@@ -110,8 +111,17 @@ titanic_test.Title = titanic_test.Title.map(
                                     dict(Mr=0, Miss=1, Mrs=2, Master=3,
                                          Rev=3, Col=3, Dr=3, Dona=3, Ms=3)
                                     )
+
+'''
+FamilySize feature:
+    person aboarded with more than 2 siblings or parents or children more likely survived
+    So combine them
+'''
+train_data["FamilySize"] = train_data["SibSp"] + train_data["Parch"] + 1
+titanic_test["FamilySize"] = titanic_test["SibSp"] + titanic_test["Parch"] + 1
+
 # Drop unimportant features
-train_data.drop(['Name', 'PassengerId', 'Survived', 'Ticket'], axis=1, inplace=True)
+train_data.drop(['Name', 'PassengerId', 'Survived', 'Ticket', 'Parch', 'SibSp'], axis=1, inplace=True)
 
 # ----
 # Test
@@ -142,7 +152,7 @@ titanic_test.loc[(titanic_test['Age'] > 45) & (titanic_test['Age'] <= 65), 'Age'
 titanic_test.loc[titanic_test['Age'] > 65, 'Age'] = 4
 
 # Drop unimportant features
-titanic_test.drop(['Name', 'PassengerId', 'Ticket'], axis=1, inplace=True)
+titanic_test.drop(['Name', 'PassengerId', 'Ticket', 'Parch', 'SibSp'], axis=1, inplace=True)
 
 Y = titanic_train.Survived.copy()
 
@@ -185,6 +195,7 @@ Kaggle   : 76.555
 
 Using Cabin feature is useless
 '''
+
 predict = tree1.predict(titanic_test)
 submission = pd.DataFrame({
     "PassengerId": PassengerId,
