@@ -60,11 +60,20 @@ train_data.loc[(train_data['Fare'] > fare_mean) & (train_data['Fare'] <= fare_me
 train_data.loc[train_data['Fare'] > fare_median, 'Fare'] = 3
 
 # Mapping Age
+'''
+Converting Numerical Age to Categorical Variable
+    map:
+        child: 0
+        young: 1
+        adult: 2 
+        middle age: 3 
+        old age: 4
+'''
 train_data.loc[train_data['Age'] <= 16, 'Age'] = 0
-train_data.loc[(train_data['Age'] > 16) & (train_data['Age'] <= 32), 'Age'] = 1
-train_data.loc[(train_data['Age'] > 32) & (train_data['Age'] <= 48), 'Age'] = 2
-train_data.loc[(train_data['Age'] > 48) & (train_data['Age'] <= 64), 'Age'] = 3
-train_data.loc[train_data['Age'] > 64, 'Age'] = 4
+train_data.loc[(train_data['Age'] > 16) & (train_data['Age'] <= 35), 'Age'] = 1
+train_data.loc[(train_data['Age'] > 35) & (train_data['Age'] <= 45), 'Age'] = 2
+train_data.loc[(train_data['Age'] > 45) & (train_data['Age'] <= 65), 'Age'] = 3
+train_data.loc[train_data['Age'] > 65, 'Age'] = 4
 
 # map the sex
 train_data.Sex = train_data.Sex.map({'male': 0, 'female': 1})
@@ -111,10 +120,10 @@ titanic_test.loc[titanic_test['Fare'] > fare_median, 'Fare'] = 3
 
 # Mapping Age
 titanic_test.loc[titanic_test['Age'] <= 16, 'Age'] = 0
-titanic_test.loc[(titanic_test['Age'] > 16) & (titanic_test['Age'] <= 32), 'Age'] = 1
-titanic_test.loc[(titanic_test['Age'] > 32) & (titanic_test['Age'] <= 48), 'Age'] = 2
-titanic_test.loc[(titanic_test['Age'] > 48) & (titanic_test['Age'] <= 64), 'Age'] = 3
-titanic_test.loc[titanic_test['Age'] > 64, 'Age'] = 4
+titanic_test.loc[(titanic_test['Age'] > 16) & (titanic_test['Age'] <= 35), 'Age'] = 1
+titanic_test.loc[(titanic_test['Age'] > 35) & (titanic_test['Age'] <= 45), 'Age'] = 2
+titanic_test.loc[(titanic_test['Age'] > 45) & (titanic_test['Age'] <= 65), 'Age'] = 3
+titanic_test.loc[titanic_test['Age'] > 65, 'Age'] = 4
 
 # Drop unimportant features
 titanic_test.drop(['Name', 'Cabin', 'PassengerId', 'Ticket'], axis=1, inplace=True)
