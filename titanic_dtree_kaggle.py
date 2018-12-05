@@ -137,8 +137,8 @@ titanic_test.loc[(titanic_test['Fare'] > fare_mean) & (titanic_test['Fare'] <= f
 titanic_test.loc[titanic_test['Fare'] > fare_median, 'Fare'] = 3
 
 # Drop unimportant features
-train_data.drop(['Name', 'PassengerId', 'Survived', 'Ticket', 'Title', 'Cabin'], axis=1, inplace=True)
-titanic_test.drop(['Name', 'PassengerId', 'Ticket', 'Title', 'Cabin'], axis=1, inplace=True)
+train_data.drop(['Name', 'PassengerId', 'Survived', 'Title', 'Cabin'], axis=1, inplace=True)
+titanic_test.drop(['Name', 'PassengerId', 'Title', 'Cabin'], axis=1, inplace=True)
 
 print(train_data.info())
 Y = titanic_train.Survived.copy()
@@ -177,6 +177,18 @@ max depth = 3
 Training : 82.3
 Validate : 79.89
 Kaggle   : 76.555
+
+with Ticket Feature:
+max depth = 3
+Training : 81.88
+Validate : 79.89
+Kaggle   : 78.947
+
+All features Except name & id "using new feature Title from the name feature"
+max depth = 3
+Training : 82.3
+Validate : 79.89
+Kaggle   : 77.511
 
 Using Cabin feature is useless
 '''
