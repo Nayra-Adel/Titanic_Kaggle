@@ -48,10 +48,7 @@ titanic_test['Embarked'] = titanic_test['Embarked'].map({'S': 0, 'C': 1, 'Q': 2}
 train_data.Sex = train_data.Sex.map({'male': 0, 'female': 1})
 titanic_test.Sex = titanic_test.Sex.map({'male': 0, 'female': 1})
 
-'''
-Converting Numerical Age to Categorical Variable
-    map => child: 0, young: 1, adult: 2, middle age: 3, old age: 4
-'''
+# map => child: 0, young: 1, adult: 2, middle age: 3, old age: 4
 # Mapping Age in training data
 train_data.loc[train_data['Age'] <= 12, 'Age'] = 0
 train_data.loc[(train_data['Age'] > 12) & (train_data['Age'] <= 20), 'Age'] = 1
@@ -104,42 +101,8 @@ submission = pd.DataFrame({
 submission.to_csv('AllFeatures_Except_Cabin_PassengerId_Name.csv', index=False)
 
 '''
-when i drop Fare & Embarked_Q still the same result:
-
-without Ticket Feature
-max depth = 2
-Training : 80.2
-Validate : 72.63
-Kaggle   : 76.555
-
-max depth = 3 
-Training : 81.6
-Validate : 79.33
-Kaggle   : 77.99
-
-max depth = 4 
-Training : 82.3
-Validate : 76.54
-Kaggle   : 77.99
-
-with Ticket Feature:
-max depth = 3
-Training : 81.88
-Validate : 79.89
-Kaggle   : 78.947
-
-max depth = 4
-min_samples_leaf = 1
-Training : 83.99
-Validate : 81.01
-Kaggle   : 79.425
-
-if i drop 'Fare' & 'Parch' still the same result
-max depth = 3
-min_samples_leaf = 10
+when i drop 'Fare' & 'Parch' still the same result
 Training : 83.71
 Validate : 81.56
 Kaggle   : 79.425
-
-Using Cabin feature is useless
 '''
